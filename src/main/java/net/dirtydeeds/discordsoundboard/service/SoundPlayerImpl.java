@@ -265,10 +265,10 @@ public class SoundPlayerImpl {
                     File soundFile = new File(fileToPlay.getSoundFileLocation());
                     playFile(soundFile.getAbsolutePath(), guild, repeatNumber);
                 } else {
-                    sendPrivateMessage(event, "Could not find sound to play. Requested sound: " + fileName + ".");
+                    sendPrivateMessage(event, "Ich kenne den Sound leider nicht.. : " + fileName + ".");
                 }
             } else {
-                sendPrivateMessage(event, "I can not find a voice channel you are connected to.");
+                sendPrivateMessage(event, "Ich finde dich in keinem Channel?");
                 LOG.warn("no guild to play to.");
             }
         }
@@ -310,16 +310,18 @@ public class SoundPlayerImpl {
      */
     public void playFileForEntrance(String fileName, GenericGuildVoiceEvent event, VoiceChannel channel) {
         if (event == null) return;
-        try {
-            moveToChannel(channel, event.getGuild());
-            LOG.info("Playing file for entrance of user: " + fileName);
+        if (!channel.getId().equals(channel.getGuild().getAfkChannel().getId())) {
             try {
-                playFile(fileName, event.getGuild());
+                moveToChannel(channel, event.getGuild());
+                LOG.info("Spiele Connect-Sound von: " + fileName);
+                try {
+                    playFile(fileName, event.getGuild());
+                } catch (SoundPlaybackException e) {
+                    LOG.info("Could not find any sound to play for entrance of user: " + fileName);
+                }
             } catch (SoundPlaybackException e) {
-                LOG.info("Could not find any sound to play for entrance of user: " + fileName);
+                LOG.debug(e.toString());
             }
-        } catch (SoundPlaybackException e) {
-            LOG.debug(e.toString());
         }
     }
 
@@ -332,16 +334,18 @@ public class SoundPlayerImpl {
      */
     public void playFileForDisconnect(String fileName, GuildVoiceLeaveEvent event) {
         if (event == null) return;
-        try {
-            moveToChannel(event.getChannelLeft(), event.getGuild());
-            LOG.info("Playing file for disconnect of user: " + fileName);
+        if (!event.getChannelLeft().getId().equals(event.getGuild().getAfkChannel().getId())) {
             try {
-                playFile(fileName, event.getGuild());
+                moveToChannel(event.getChannelLeft(), event.getGuild());
+                LOG.info("Playing file for disconnect of user: " + fileName);
+                try {
+                    playFile(fileName, event.getGuild());
+                } catch (SoundPlaybackException e) {
+                    LOG.info("Could not find any sound to play for disconnect of user: " + fileName);
+                }
             } catch (SoundPlaybackException e) {
-                LOG.info("Could not find any sound to play for disconnect of user: " + fileName);
+                LOG.debug(e.toString());
             }
-        } catch (SoundPlaybackException e) {
-            LOG.debug(e.toString());
         }
     }
 
@@ -710,7 +714,7 @@ public class SoundPlayerImpl {
             bannedUsers = appProperties.getBannedUserIds();
             bannedUserIds = appProperties.getBannedUserIds();
 
-            Game game = Game.of(Game.GameType.DEFAULT,"Type " + appProperties.getCommandCharacter() + "help for a list of commands.");
+            Game game = Game.of(Game.GameType.DEFAULT,"Butzbudenmusik");
             bot.getPresence().setGame(game);
 
             try {

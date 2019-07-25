@@ -75,12 +75,12 @@ public class ChatSoundBoardListener extends ListenerAdapter {
         String message = originalMessage.toLowerCase();
 
         if (!soundPlayer.isUserAllowed(requestingUser, requestingUserId)) {
-            replyByPrivateMessage(event, "I don't take orders from you.");
+            replyByPrivateMessage(event, "Ich lasse mir von dir nichts sagen!");
             super.onMessageReceived(event);
             return;
         }
         if (soundPlayer.isUserBanned(requestingUser, requestingUserId)) {
-            replyByPrivateMessage(event, "You've been banned from using this soundboard bot.");
+            replyByPrivateMessage(event, "Ich habe dich blockiert.");
             super.onMessageReceived(event);
             return;
         }
@@ -206,7 +206,7 @@ public class ChatSoundBoardListener extends ListenerAdapter {
                         " pages of soundFiles. Reply: ```" + appProperties.getCommandCharacter() +
                         "list pageNumber``` to request a specific page of results.");
             } else {
-                replyByPrivateMessage(event, "Type any of the following into the chat to play the sound:");
+                replyByPrivateMessage(event, "Folgende Sounds habe ich gespeichert:");
                 replyByPrivateMessage(event, soundList.get(0));
             }
         } else {
@@ -226,7 +226,7 @@ public class ChatSoundBoardListener extends ListenerAdapter {
 
     private void helpCommand(MessageReceivedEvent event, String requestingUser, String requestingUserId) {
         LOG.info("Responding to help command. Requested by " + requestingUser + ". ID: " + requestingUserId);
-        replyByPrivateMessage(event, "You can type any of the following commands:" +
+        replyByPrivateMessage(event, "Ich nehme folgende Befehle an:" +
                 "\n```" + appProperties.getCommandCharacter() + "list             - Returns a list of available sound files." +
                 "\n" + appProperties.getCommandCharacter() + "soundFileName    - Plays the specified sound from the list." +
                 "\n" + appProperties.getCommandCharacter() + "yt youtubeLink   - Plays the youtube link specified." +
@@ -244,12 +244,12 @@ public class ChatSoundBoardListener extends ListenerAdapter {
         if (newVol >= 1 && newVol <= 100) {
             muted = false;
             soundPlayer.setSoundPlayerVolume(newVol, requestingUser);
-            replyByPrivateMessage(event, "*Volume set to " + newVol + "%*");
+            replyByPrivateMessage(event, "*Lautstärke: " + newVol + "%*");
             LOG.info("Volume set to " + newVol + "% by " + requestingUser + ". ID: " + requestingUserId);
         } else if (newVol == 0) {
             muted = true;
             soundPlayer.setSoundPlayerVolume(newVol, requestingUser);
-            replyByPrivateMessage(event, requestingUser + " muted me.");
+            replyByPrivateMessage(event, requestingUser + " hat mich gemuted.");
             LOG.info("Bot muted by " + requestingUser + ".");
         }
         deleteMessage(event);
@@ -258,7 +258,7 @@ public class ChatSoundBoardListener extends ListenerAdapter {
     private void stopCommand(MessageReceivedEvent event, String requestingUser) {
         LOG.info("Stop requested by " + requestingUser + ".");
         if (soundPlayer.stop(requestingUser)) {
-            replyByPrivateMessage(event, "Playback stopped.");
+            replyByPrivateMessage(event, "Butzbudenmusik gestoppt.");
         } else {
             replyByPrivateMessage(event, "Nothing was playing.");
         }
